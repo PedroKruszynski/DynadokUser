@@ -1,0 +1,41 @@
+import 'reflect-metadata';
+
+import express, { Request, Response, NextFunction } from 'express';
+import 'express-async-errors';
+
+import AppError from '@shared/errors/AppError';
+import routes from './routes';
+import config from '@shared/environment';
+import Database from '@shared/infra/mongodb'; 
+import '@shared/container';
+
+Database.connect();
+
+const app = express();
+
+app.use(express.json());
+app.use(routes);
+
+app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
+  console.error(err);
+  if (err instanceof AppError) {
+    return response.status(err.statusCode).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+
+  return response.status(500).json({
+    status: 'error',
+    message: 'Internal server error',
+  });
+});
+
+app.get('/', (request: Request, response: Response) => response.status(200).json({
+  status: 'success',
+  message: 'Server online',
+}));
+
+app.listen(config.app.port, () => {
+  console.log(`Server started on port ${config.app.port}!`);
+});

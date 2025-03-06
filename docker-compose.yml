@@ -1,0 +1,100 @@
+version: "3.8"
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DEFAULT_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DEFAULT_DATABASE:-siriodb}
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    container_name: redis
+    image: redis:7.4
+    restart: always
+    ports:
+      - "6379:6379"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT:-2181}
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT:-2181}:${ZOOKEEPER_CLIENT_PORT:-2181}"
+    networks:
+      - kafka_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:${KAFKA_PORT:-9092},PLAINTEXT_HOST://localhost:${KAFKA_HOST_PORT:-9091}
+      - KAFKA_LISTENER_NAME_INTERNAL=INTERNAL
+      - KAFKA_LISTENER_INTERNAL_PORT=9093
+      - KAFKA_LISTENER_INTERNAL=INTERNAL
+      - KAFKA_LISTENER_PORT=${KAFKA_PORT:-9092}
+
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:${ZOOKEEPER_CLIENT_PORT:-2181}
+      
+      - KAFKA_OFFSET_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
+      
+      - KAFKA_LISTENER_HOSTNAME=0.0.0.0
+
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=${KAFKA_AUTO_CREATE_TOPICS_ENABLE:-true}
+      - KAFKA_DEFAULT_TOPIC=${KAFKA_DEFAULT_TOPIC:-travel-log}
+    ports:
+      - "${KAFKA_PORT:-9092}:${KAFKA_PORT:-9092}"
+      - "${KAFKA_HOST_PORT:-9091}:${KAFKA_HOST_PORT:-9091}"
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka_network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:${KAFKA_PORT:-9092}
+    ports:
+      - "${KAFKA_UI_PORT:-8080}:8080"
+    networks:
+      - kafka_network
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: app.Dockerfile
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #   command: ["npm", "run", "start:prod"]
+  #   depends_on:
+  #     - db
+
+  # test:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   command: ["npm", "test"]
+  #   environment:
+  #   depends_on:
+  #     - db
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  kafka_network:
+    driver: bridge

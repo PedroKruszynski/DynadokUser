@@ -1,14 +1,14 @@
 import AppError from '@shared/errors/AppError';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import ValidateCreateUser from '../../validation/ValidateCreateUser';
 
 import CreateUserService from '@modules/users/services/CreateUserService';
 import FindAllUsersService from '@modules/users/services/FindAllUsersService';
 import FindByIdService from '@modules/users/services/FindById';
+import UpdateByUserService from '@modules/users/services/UpdateUserService';
 import ValidateFindById from '../../validation/ValidateFindById';
 import ValidateUpdateUser from '../../validation/ValidateUpdateUser';
-import UpdateByUserService from '@modules/users/services/UpdateUserService';
+import ValidateCreateUser from '../../validation/ValidateCreateUser';
 
 export default class UsersController {
   public async create(

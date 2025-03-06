@@ -1,4 +1,4 @@
-import { env } from "process";
+import { env } from 'process';
 
 require('dotenv').config();
 
@@ -24,24 +24,24 @@ interface IConfig {
 }
 
 const config : IConfig = {
-    app: {
-        env: env.NODE_ENV || 'development',
-        port: Number(env.APP_PORT) || 3000
-    },
-    mongo: {
-        host: env.MONGO_HOST || 'localhost',
-        port: Number(env.MONGO_PORT) || 27017,
-        database: env.MONGO_DATABASE
-    },
-    redis: {
-        disabled: Boolean(env.REDIS_DISABLED) || false,
-        host: env.REDIS_HOST || 'localhost',
-        port: Number(env.REDIS_PORT) || 6379
-    },
-    kafka: {
-        disabled: Boolean(env.KAFKA_DISABLED) || false,
-        brokers: env.KAFKA_BROKERS || 'localhost:9092',
-    }
+  app: {
+    env: env.NODE_ENV || 'development',
+    port: Number(env.APP_PORT) || 3000,
+  },
+  mongo: {
+    host: env.MONGO_HOST || 'localhost',
+    port: Number(env.MONGO_PORT) || 27017,
+    database: env.MONGO_DATABASE,
+  },
+  redis: {
+    disabled: Boolean(env.REDIS_DISABLED) || false,
+    host: env.REDIS_HOST || 'localhost',
+    port: Number(env.REDIS_PORT) || 6379,
+  },
+  kafka: {
+    disabled: Boolean(env.KAFKA_DISABLED) || false,
+    brokers: env.KAFKA_BROKERS || 'localhost:9092',
+  },
 }
 
 export default config;

@@ -9,8 +9,7 @@ import { ObjectId } from 'mongodb';
 
 export default class UsersRepository
   extends BaseRepository
-  implements IUserRepository
-{
+  implements IUserRepository {
   constructor() {
     super('users');
   }
@@ -19,7 +18,7 @@ export default class UsersRepository
     const usersCollection = await this.getCollection();
     const usersArray = await usersCollection.find().toArray();
 
-    const users = usersArray.map(doc => (this.DocumentToObject<User>(doc)));
+    const users = usersArray.map((doc) => (this.DocumentToObject<User>(doc)));
 
     return users;
   }
@@ -27,13 +26,13 @@ export default class UsersRepository
   public async findById(id: string): Promise<User | undefined> {
     const usersCollection = await this.getCollection();
     const userDocument = await usersCollection.findOne({
-      _id: new ObjectId(id)
+      _id: new ObjectId(id),
     });
 
     if (userDocument === null) {
       return undefined;
     }
-    
+
     const user = this.DocumentToObject<User>(userDocument);
 
     return user;
@@ -42,13 +41,13 @@ export default class UsersRepository
   public async findByEmail(email: string): Promise<User | undefined> {
     const usersCollection = await this.getCollection();
     const userDocument = await usersCollection.findOne({
-      email: { $eq: email }  
+      email: { $eq: email },
     });
 
     if (userDocument === null) {
       return undefined;
     }
-    
+
     const user = this.DocumentToObject<User>(userDocument);
 
     return user;
@@ -60,7 +59,7 @@ export default class UsersRepository
     const insertedUser = await this.findById(result.insertedId.toString());
 
     if (!insertedUser) {
-      throw new Error("Failed to retrieve inserted user");
+      throw new Error('Failed to retrieve inserted user');
     }
 
     return insertedUser;
@@ -75,7 +74,7 @@ export default class UsersRepository
     const updatedUser = await this.findById(userData.id);
 
     if (!updatedUser) {
-      throw new Error("Failed to retrieve updated user");
+      throw new Error('Failed to retrieve updated user');
     }
 
     return updatedUser;

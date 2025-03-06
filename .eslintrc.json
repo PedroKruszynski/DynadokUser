@@ -4,9 +4,7 @@
         "node": true,
         "jest": true
     },
-    "extends": [
-        "airbnb-base"
-    ],
+    "extends": ["airbnb-base"],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -21,6 +19,7 @@
         "prettier"
     ],
     "rules": {
+        "semi": ["off"],
         "max-len": [
             "error", {
                 "code": 115

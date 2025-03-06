@@ -9,9 +9,11 @@ class CreateUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-  ) {}
+  ) {
+    // Do nothing
+  }
 
-  public async execute({email, name, phone}: ICreateUserDTO): Promise<ICreateUserDTO> {
+  public async execute({ email, name, phone }: ICreateUserDTO): Promise<ICreateUserDTO> {
     const checkUserExist = await this.usersRepository.findByEmail(email);
 
     if (checkUserExist) {

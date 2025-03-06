@@ -10,9 +10,13 @@ class UpdateByUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-  ) {}
+  ) {
+    // Do Nothing
+  }
 
-  public async execute({ id, email, name, phone }: IUpdateUserDTO): Promise<IEntitieUser | undefined> {
+  public async execute({
+    id, email, name, phone,
+  }: IUpdateUserDTO): Promise<IEntitieUser | undefined> {
     if (email) {
       const checkUserExist = await this.usersRepository.findByEmail(email);
       if (checkUserExist) {

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
 
 import AppError from '@shared/errors/AppError';
@@ -8,6 +8,7 @@ import config from '@shared/environment';
 import Database from '@shared/infra/mongodb';
 import Redis from '@shared/infra/redis';
 import Kafka from '@shared/infra/kafka';
+import SetupSwagger from '@config/swagger';
 import routes from './routes';
 import '@shared/container';
 
@@ -20,7 +21,10 @@ const app = express();
 app.use(express.json());
 app.use(routes);
 
-app.use((err: Error, request: Request, response: Response) => {
+SetupSwagger(app)
+
+// eslint-disable-next-line no-unused-vars
+app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   console.error(err);
   if (err instanceof AppError) {
     return response.status(err.statusCode).json({

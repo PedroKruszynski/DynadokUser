@@ -7,11 +7,13 @@ import AppError from '@shared/errors/AppError';
 import config from '@shared/environment';
 import Database from '@shared/infra/mongodb';
 import Redis from '@shared/infra/redis';
+import Kafka from '@shared/infra/kafka';
 import routes from './routes';
 import '@shared/container';
 
 Database.connect();
 Redis.connect();
+Kafka.connectProducer();
 
 const app = express();
 

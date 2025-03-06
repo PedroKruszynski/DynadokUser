@@ -19,11 +19,11 @@ class UpdateByUserService {
 
   public async execute({
     id, email, name, phone,
-  }: IUpdateUserDTO): Promise<IEntitieUser | undefined> {
+  }: IUpdateUserDTO): Promise<IEntitieUser | undefined | AppError> {
     if (email) {
       const checkUserExist = await this.usersRepository.findByEmail(email);
       if (checkUserExist) {
-        throw new AppError('User with new email already exist');
+        return new AppError('User with new email already exist');
       }
     }
 

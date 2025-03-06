@@ -5,6 +5,8 @@ import UsersRepository from '@modules/users/infra/mongodb/repositories/UsersRepo
 
 import RedisUsersRepository from '@modules/users/infra/redis';
 import IRedisBaseRepository from '@shared/infra/redis/entities';
+import KafkaUsers from '@modules/users/infra/kafka';
+import KafkaProducer from '@shared/infra/kafka/repositories';
 
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
@@ -14,4 +16,9 @@ container.registerSingleton<IUsersRepository>(
 container.registerSingleton<IRedisBaseRepository>(
   'RedisUsersRepository',
   RedisUsersRepository,
+);
+
+container.registerSingleton<KafkaProducer>(
+  'KafkaUsers',
+  KafkaUsers,
 );

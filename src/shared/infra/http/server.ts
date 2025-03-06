@@ -6,10 +6,12 @@ import 'express-async-errors';
 import AppError from '@shared/errors/AppError';
 import config from '@shared/environment';
 import Database from '@shared/infra/mongodb';
+import Redis from '@shared/infra/redis';
 import routes from './routes';
 import '@shared/container';
 
 Database.connect();
+Redis.connect();
 
 const app = express();
 

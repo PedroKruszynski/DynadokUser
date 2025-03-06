@@ -1,6 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
+import IRedisBaseRepository from '@shared/infra/redis/entities';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IUpdateUserDTO from '../dtos/IUpdateUserDTO';
 import IEntitieUser from '../infra/mongodb/entities/User';
@@ -10,6 +11,8 @@ class UpdateByUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+    @inject('RedisUsersRepository')
+    private usersRedisRepository: IRedisBaseRepository,
   ) {
     // Do Nothing
   }
@@ -30,6 +33,10 @@ class UpdateByUserService {
       name,
       phone,
     });
+
+    if (user) {
+      await this.usersRedisRepository.save(id, JSON.stringify(user));
+    }
 
     return user;
   }

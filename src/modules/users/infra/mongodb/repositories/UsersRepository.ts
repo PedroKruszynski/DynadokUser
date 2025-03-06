@@ -19,15 +19,6 @@ export default class UsersRepository
     const usersCollection = await this.getCollection();
     const usersArray = await usersCollection.find().toArray();
 
-    // const users = usersArray.map(doc => ({
-    //   id: doc._id,
-    //   name: doc.name,
-    //   email: doc.email,
-    //   phone: doc.phone,
-    //   created_at: doc.created_at,
-    //   updated_at: doc.updated_at,
-    // }))
-
     const users = usersArray.map(doc => (this.DocumentToObject<User>(doc)));
 
     return users;
@@ -64,14 +55,7 @@ export default class UsersRepository
   }
 
   public async create(userData: ICreateUserDTO): Promise<User> {
-    const usersCollection = await this.getCollection();
-    const result = await usersCollection.insertOne(userData);
-
-    if (!result.acknowledged) {
-      throw new Error("Failed to insert user");
-    }
-
-    console.log(result.insertedId.toString());
+    const result = await this.createDocument(userData);
 
     const insertedUser = await this.findById(result.insertedId.toString());
 
@@ -82,19 +66,13 @@ export default class UsersRepository
     return insertedUser;
   }
 
-  public async update(id: string, userData: IUpdateUserDTO): Promise<User> {
-    const usersCollection = await this.getCollection();
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: userData },
-      { upsert: false }
-    );
+  public async update(userData: IUpdateUserDTO): Promise<User | undefined> {
+    const result = await this.updateDocument(userData);
 
-    if (result.modifiedCount === 0) {
-      throw new Error("Failed to update user");
+    if (!result) {
+      return undefined;
     }
-
-    const updatedUser = await this.findById(id);
+    const updatedUser = await this.findById(userData.id);
 
     if (!updatedUser) {
       throw new Error("Failed to retrieve updated user");

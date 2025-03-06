@@ -1,4 +1,4 @@
-import { Db, WithId, Document } from 'mongodb'
+import { Db, WithId, Document, InsertOneResult, ObjectId } from 'mongodb'
 import Database from '..'
 
 export default class BaseRepository {
@@ -19,5 +19,46 @@ export default class BaseRepository {
         delete (object as any)._id;
     
         return object;
+    }
+
+    public async createDocument<T>(data: T extends Document ? T : T & Document): Promise<InsertOneResult> {
+        const collection = await this.getCollection();
+
+        Object.assign(data, { createdAt: new Date(), updatedAt: new Date() });
+
+        const result = await collection.insertOne(data);
+
+        if (!result.acknowledged) {
+            throw new Error("Failed to insert document");
+        }
+
+        return result
+    }
+
+    public async updateDocument<T>(data: T extends Document ? T : T & Document): Promise<boolean> {
+        const collection = await this.getCollection();
+
+        const newDocument = { ...data } as Document;
+        const id = newDocument.id;
+        delete newDocument.id;
+
+        Object.keys(newDocument).forEach(key => {
+            if (newDocument[key] === undefined) {
+                delete newDocument[key];
+            }
+        });
+        Object.assign(newDocument, { updatedAt: new Date() });
+
+        const result = await collection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: newDocument },
+            { upsert: false }
+        );
+
+        if (result.modifiedCount === 0) {
+            throw new Error("Failed to update document");
+        }
+
+        return true
     }
 }

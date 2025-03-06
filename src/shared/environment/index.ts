@@ -21,6 +21,8 @@ interface IConfig {
         disabled: boolean
         brokers: string[]
         clientId: string
+        consumerGroup: string
+        topics: string[]
     }
 }
 
@@ -43,6 +45,8 @@ const config : IConfig = {
     disabled: Boolean(env.KAFKA_DISABLED) || false,
     brokers: env.KAFKA_BROKERS?.split(',') || ['localhost:9092'],
     clientId: env.KAFKA_CLIENT_ID || 'dynadok',
+    consumerGroup: env.KAFKA_CONSUMER_GROUP || 'dynadok-consumer-group',
+    topics: env.KAFKA_TOPICS?.split(',') || ['users'],
   },
 }
 

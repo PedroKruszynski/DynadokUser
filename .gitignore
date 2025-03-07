@@ -6,8 +6,6 @@ temp/
 tmp/*
 !tmp/.gitkeep
 .env
-yarn.lock
-package-lock.json
 
 dist/
 coverage/

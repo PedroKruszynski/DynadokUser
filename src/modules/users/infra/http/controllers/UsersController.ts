@@ -128,10 +128,18 @@ export default class UsersController {
 
   /**
    * @swagger
-   * /users/:id:
+   * /users/{id}:
    *   get:
    *     summary: Find a user by id
    *     tags: [Users]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: ID of the user to be find
+   *         schema:
+   *           type: string
+   *           pattern: "^[a-fA-F0-9]{24}$"
    *     responses:
    *       200:
    *         description: Find one user successfully
@@ -183,10 +191,18 @@ export default class UsersController {
 
   /**
    * @swagger
-   * /users/:id:
+   * /users/{id}:
    *   patch:
    *     summary: Create a new user
    *     tags: [Users]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: ID of the user to be updated
+   *         schema:
+   *           type: integer
+   *           format: int64
    *     requestBody:
    *       required: true
    *       content:

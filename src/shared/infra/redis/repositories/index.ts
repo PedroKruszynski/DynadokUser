@@ -1,12 +1,15 @@
 import RedisConnection from '@shared/infra/redis';
 import Redis from 'ioredis';
+import config from '@shared/environment';
 import IRedisBaseRepository from '../entities';
 
 export default class RedisBaseRepository implements IRedisBaseRepository {
   private client: Redis
 
   constructor() {
-    this.client = RedisConnection.getClient();
+    if (config.app.env !== 'test') {
+      this.client = RedisConnection.getClient();
+    }
   }
 
   async save(key: string, value: any): Promise<'OK'> {

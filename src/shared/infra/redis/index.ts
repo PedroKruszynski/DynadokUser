@@ -7,7 +7,9 @@ class RedisConnection {
   private uriConnection = `redis://${config.redis.host}:${config.redis.port}`;
 
   constructor() {
-    this.client = new Redis(this.uriConnection);
+    if (config.app.env !== 'test') {
+      this.client = new Redis(this.uriConnection);
+    }
   }
 
   async connect(): Promise<RedisClient> {
